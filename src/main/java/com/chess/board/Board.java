@@ -17,7 +17,11 @@ import com.chess.pieces.Rook;
 // the board is used to get the pieces from the board
 // the board is used to set the pieces on the board
 public class Board {
+    
+    // the board is a 8x8 matrix of pieces
     private final Piece[][] BOARD;
+
+    // use binary to represent the pieces and their colors
     private final int BLACK = 16;
     private final int WHITE = 8;
     private final int EMPTY = 0;
@@ -65,6 +69,15 @@ public class Board {
             for (int j = 0; j < COLS; j++) {
                 BOARD[i][j] = new Piece(EMPTY, 0);
             }
+        }
+    }
+
+    public void printBoard() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                System.out.print(BOARD[i][j].getPIECE_TYPE() + " ");
+            }
+            System.out.println();
         }
     }
 }
