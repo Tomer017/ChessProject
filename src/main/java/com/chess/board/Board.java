@@ -33,6 +33,10 @@ public class Board {
         this.BOARD = new Piece[ROWS][COLS];
     }
 
+    public Piece getPiece(int x, int y) {
+        return BOARD[x][y];
+    }
+
     public void initializeBoard() {
         // initalize black pieces
         BOARD[0][0] = new Rook(BLACK);
