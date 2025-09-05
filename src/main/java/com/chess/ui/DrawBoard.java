@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import com.chess.board.Board;
+import com.chess.utils.gameHandler;
 
 public class DrawBoard {
 
@@ -27,6 +28,10 @@ public class DrawBoard {
     }
 
     public void drawBoard(Board board, Graphics g) {
+        drawBoard(board, g, null);
+    }
+
+    public void drawBoard(Board board, Graphics g, gameHandler gameHandler) {
         // Draw the board image
         if (boardImage != null) {
             g.drawImage(boardImage, 0, 0, BOARD_SIZE, BOARD_SIZE, null);
@@ -37,14 +42,30 @@ public class DrawBoard {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 var piece = board.getPiece(i, j);
-                // Only draw if piece exists and is not empty (captured pieces won't be drawn)
-                if (piece != null && piece.getColor() != 0) {
+                
+                // Skip drawing the piece if it's currently being dragged
+                boolean isBeingDragged = gameHandler != null && gameHandler.isDragging() && 
+                                       gameHandler.getDragStartRow() == i && gameHandler.getDragStartCol() == j;
+                
+                // Only draw if piece exists, is not empty, and is not being dragged
+                if (piece != null && piece.getColor() != 0 && !isBeingDragged) {
                     BufferedImage pieceImage = getPieceImage(piece);
                     if (pieceImage != null) {
                         // Draw at (column * SQUARE_SIZE, row * SQUARE_SIZE)
                         g.drawImage(pieceImage, j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, null);
                     }
                 }
+            }
+        }
+
+        // Draw the dragged piece at cursor position
+        if (gameHandler != null && gameHandler.isDragging() && gameHandler.getDraggedPiece() != null) {
+            BufferedImage draggedPieceImage = getPieceImage(gameHandler.getDraggedPiece());
+            if (draggedPieceImage != null) {
+                // Draw centered on cursor
+                int dragX = gameHandler.getDragX() - SQUARE_SIZE / 2;
+                int dragY = gameHandler.getDragY() - SQUARE_SIZE / 2;
+                g.drawImage(draggedPieceImage, dragX, dragY, SQUARE_SIZE, SQUARE_SIZE, null);
             }
         }
     }

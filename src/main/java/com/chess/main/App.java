@@ -38,11 +38,15 @@ public class App {
         board.initializeBoard();
         board.printBoard();
 
+        // Connect render and gameHandler
+        render.setGameHandler(gameHandler);
+
         // Set up mouse handler
         MouseHandler mouseHandler = new MouseHandler(board, drawBoard, drawBoard.getSquareSize(), drawBoard.getBoardSize());
         gameHandler.setMouseHandler(mouseHandler);
         mouseHandler.setGameHandler(gameHandler);
         gamePanel.addMouseListener(mouseHandler);
+        gamePanel.addMouseMotionListener(mouseHandler); // Add motion listener for dragging
 
         // Set up render callback to repaint the panel when a move is made
         gameHandler.setRenderCallback(() -> {

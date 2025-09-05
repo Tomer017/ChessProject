@@ -9,6 +9,14 @@ public class gameHandler {
     private MouseHandler mouseHandler;
     private Runnable renderCallback;
     
+    // Drag state
+    private boolean isDragging = false;
+    private int dragStartRow = -1;
+    private int dragStartCol = -1;
+    private int dragX = 0;
+    private int dragY = 0;
+    private Piece draggedPiece = null;
+    
     // Constants for colors
     private static final int WHITE = 8;
     private static final int BLACK = 16;
@@ -42,7 +50,6 @@ public class gameHandler {
         // Check if trying to capture own piece
         Piece endPiece = board.getPiece(endRow, endCol);
         if (endPiece != null && endPiece.getColor() == currentTurn) {
-            System.out.println("Cannot capture your own piece");
             return;
         }
 
@@ -51,7 +58,6 @@ public class gameHandler {
         
         // Check if capturing an enemy piece
         if (endPiece != null && endPiece.getColor() != EMPTY && endPiece.getColor() != currentTurn) {
-            System.out.println("Capturing " + (endPiece.getColor() == WHITE ? "white" : "black") + " piece");
         }
         
         board.movePiece(startRow, startCol, endRow, endCol);
@@ -74,11 +80,6 @@ public class gameHandler {
 
         int[] pressedPos = mouseHandler.getMousePressedPosition();
         int[] releasedPos = mouseHandler.getMouseReleasedPosition();
-        
-        if (pressedPos == null || releasedPos == null) {
-            System.out.println("Mouse positions not available");
-            return;
-        }
 
         // Convert mouse coordinates to board coordinates
         // MouseHandler returns [x, y] where x=column, y=row
@@ -103,5 +104,71 @@ public class gameHandler {
 
     public String getCurrentTurnString() {
         return currentTurn == WHITE ? "White" : "Black";
+    }
+
+    // Drag methods
+    public void startDrag(int row, int col) {
+        Piece piece = board.getPiece(row, col);
+        if (piece != null && piece.getColor() == currentTurn) {
+            isDragging = true;
+            dragStartRow = row;
+            dragStartCol = col;
+            draggedPiece = piece;
+            System.out.println("Started dragging piece at (" + col + "," + row + ")");
+            
+            // Trigger re-render to show drag state
+            if (renderCallback != null) {
+                renderCallback.run();
+            }
+        }
+    }
+
+    public void updateDragPosition(int x, int y) {
+        if (isDragging) {
+            dragX = x;
+            dragY = y;
+            
+            // Trigger re-render to update drag position
+            if (renderCallback != null) {
+                renderCallback.run();
+            }
+        }
+    }
+
+    public void endDrag() {
+        isDragging = false;
+        draggedPiece = null;
+        dragStartRow = -1;
+        dragStartCol = -1;
+        
+        // Trigger re-render to clear drag state
+        if (renderCallback != null) {
+            renderCallback.run();
+        }
+    }
+
+    // Getters for drag state
+    public boolean isDragging() {
+        return isDragging;
+    }
+
+    public int getDragStartRow() {
+        return dragStartRow;
+    }
+
+    public int getDragStartCol() {
+        return dragStartCol;
+    }
+
+    public int getDragX() {
+        return dragX;
+    }
+
+    public int getDragY() {
+        return dragY;
+    }
+
+    public Piece getDraggedPiece() {
+        return draggedPiece;
     }
 }
