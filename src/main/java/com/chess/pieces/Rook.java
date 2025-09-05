@@ -11,6 +11,7 @@ public class Rook extends Piece {
         return 2;
     }
 
+    @Override
     public boolean isValidMove(int startX, int startY, int endX, int endY) {
         return false;
     }

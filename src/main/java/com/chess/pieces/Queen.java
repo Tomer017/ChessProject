@@ -10,6 +10,7 @@ public class Queen extends Piece {
         return 5;
     }
 
+    @Override
     public boolean isValidMove(int startX, int startY, int endX, int endY) {
         return false;
     }

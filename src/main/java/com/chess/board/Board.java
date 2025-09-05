@@ -84,4 +84,21 @@ public class Board {
             System.out.println();
         }
     }
+
+    public void movePiece(int startX, int startY, int endX, int endY) {
+        // Check if there's a piece at the start position
+        if (BOARD[startX][startY] != null && BOARD[startX][startY].getColor() != EMPTY) {
+            // Move piece (capturing if there's an enemy piece at destination)
+            BOARD[endX][endY] = BOARD[startX][startY];
+            BOARD[startX][startY] = new Piece(EMPTY, 0); // Set start position to empty
+        }
+    }
+
+    public void setPiece(int x, int y, Piece piece) {
+        BOARD[x][y] = piece;
+    }
+
+    public boolean isEmptySquare(int x, int y) {
+        return BOARD[x][y] == null || BOARD[x][y].getColor() == EMPTY;
+    }
 }

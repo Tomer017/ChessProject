@@ -37,7 +37,8 @@ public class DrawBoard {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 var piece = board.getPiece(i, j);
-                if (piece != null) {
+                // Only draw if piece exists and is not empty (captured pieces won't be drawn)
+                if (piece != null && piece.getColor() != 0) {
                     BufferedImage pieceImage = getPieceImage(piece);
                     if (pieceImage != null) {
                         // Draw at (column * SQUARE_SIZE, row * SQUARE_SIZE)
