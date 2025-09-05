@@ -15,7 +15,7 @@ public class App {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+        frame.setSize(800, 825);
 
         Board board = new Board();
         DrawBoard drawBoard = new DrawBoard();
