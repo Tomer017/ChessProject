@@ -17,25 +17,43 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public boolean isValidMove(int startX, int startY, int endX, int endY) {
-        if (isFirstMove && getColor() == WHITE) {
-            if (startX == endX && (startY == endY + 1 || startY == endY + 2)) {
-                return true;
-            }
-        } else if (startY == endY + 1 && getColor() == WHITE) {
-            if (startX == endX && startY == endY + 1) {
-                return true;
-            }
-        } else if (isFirstMove && getColor() == BLACK) {
-            if (startX == endX && (startY == endY - 1 || startY == endY - 2)) {
-                return true;
-            }
-        } else if (startY == endY - 1 && getColor() == BLACK) {
-            if (startX == endX && startY == endY - 1) {
-                return true;
+    public boolean isLegalMove(int startCol, int startRow, int endCol, int endRow) {
+        int colDiff = endCol - startCol;
+        int rowDiff = endRow - startRow;
+        
+        // Check for forward movement (no capture)
+        if (colDiff == 0) {
+            // White moves up (decreasing row), Black moves down (increasing row)
+            if (getColor() == WHITE) {
+                // White pawn: can move 1 square forward, or 2 on first move
+                if (rowDiff == -1 || (isFirstMove && rowDiff == -2)) {
+                    return true;
+                }
+            } else if (getColor() == BLACK) {
+                // Black pawn: can move 1 square forward, or 2 on first move
+                if (rowDiff == 1 || (isFirstMove && rowDiff == 2)) {
+                    return true;
+                }
             }
         }
-          
+        
+        // Check for diagonal capture
+        if (Math.abs(colDiff) == 1) {
+            if (getColor() == WHITE && rowDiff == -1) {
+                return true; // White diagonal capture (one row forward)
+            } else if (getColor() == BLACK && rowDiff == 1) {
+                return true; // Black diagonal capture (one row forward)
+            }
+        }
+        
         return false;
+    }
+
+    public void setFirstMove(boolean firstMove) {
+        this.isFirstMove = firstMove;
+    }
+
+    public boolean isFirstMove() {
+        return isFirstMove;
     }
 }

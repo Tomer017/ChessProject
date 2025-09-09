@@ -21,7 +21,7 @@ public class Piece {
         this.color = color;
     }
 
-    public boolean isValidMove(int startX, int startY, int endX, int endY) {
+    public boolean isLegalMove(int startX, int startY, int endX, int endY) {
         return false;
     }
 

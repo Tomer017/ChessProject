@@ -50,7 +50,8 @@ public class gameHandler {
         }
 
         // Check if the move is valid
-        if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow)) {
+        if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow, board)) {
+            System.out.println("Invalid move for piece type");
             return;
         }
 
