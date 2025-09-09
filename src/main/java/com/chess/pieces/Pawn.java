@@ -45,6 +45,9 @@ public class Pawn extends Piece {
                 return true; // Black diagonal capture (one row forward)
             }
         }
+
+        // Check for en passant
+        
         
         return false;
     }

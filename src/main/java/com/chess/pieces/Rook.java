@@ -6,6 +6,7 @@ public class Rook extends Piece {
     private final int WHITE = 8;
     private final int BLACK = 16;
     private final Board board;
+    private boolean hasMovedBefore = false;
 
     public Rook(int color) {
         super(color, 2);
