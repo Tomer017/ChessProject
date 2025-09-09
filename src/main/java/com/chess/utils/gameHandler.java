@@ -8,6 +8,7 @@ public class gameHandler {
     private int currentTurn = 8; // 8 = white starts, 16 = black
     private MouseHandler mouseHandler;
     private Runnable renderCallback;
+    private RuleHandler ruleHandler;
     
     // Drag state
     private boolean isDragging = false;
@@ -24,6 +25,7 @@ public class gameHandler {
 
     public gameHandler(Board board) {
         this.board = board;
+        this.ruleHandler = new RuleHandler();
     }
 
     public void makeMove(int startCol, int startRow, int endCol, int endRow) {
@@ -44,6 +46,11 @@ public class gameHandler {
         // Check if it's the correct player's turn
         if (startPiece.getColor() != currentTurn) {
             System.out.println("Not your turn! Current turn: " + (currentTurn == WHITE ? "White" : "Black"));
+            return;
+        }
+
+        // Check if the move is valid
+        if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow)) {
             return;
         }
 
