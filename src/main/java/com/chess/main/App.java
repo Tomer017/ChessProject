@@ -36,7 +36,6 @@ public class App {
 
         // Initialize the board
         board.initializeBoard();
-        board.printBoard();
 
         // Connect render and gameHandler
         render.setGameHandler(gameHandler);
@@ -51,7 +50,6 @@ public class App {
         // Set up render callback to repaint the panel when a move is made
         gameHandler.setRenderCallback(() -> {
             gamePanel.repaint();
-            System.out.println("Board re-rendered!");
         });
 
         // Initial render
