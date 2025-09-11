@@ -18,6 +18,9 @@ public class gameHandler {
     private int dragY = 0;
     private Piece draggedPiece = null;
     
+    // En passant state
+    private String enPassantTarget = "-";
+    
     // Constants for colors
     private static final int WHITE = 8;
     private static final int BLACK = 16;
@@ -49,8 +52,8 @@ public class gameHandler {
             return;
         }
 
-        // Check if the move is valid
-        if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow, board)) {
+        // Check if the move is valid (including en passant)
+        if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow, board, enPassantTarget)) {
             System.out.println("Invalid move for piece type");
             return;
         }
@@ -64,15 +67,36 @@ public class gameHandler {
         // Make the move
         System.out.println("Moving piece from (" + startCol + "," + startRow + ") to (" + endCol + "," + endRow + ")");
         
-        // Check if capturing an enemy piece
-        if (endPiece != null && endPiece.getColor() != EMPTY && endPiece.getColor() != currentTurn) {
+        // Check for en passant capture before moving
+        boolean isEnPassantCapture = false;
+        if (startPiece instanceof com.chess.pieces.Pawn) {
+            com.chess.pieces.Pawn pawn = (com.chess.pieces.Pawn) startPiece;
+            if (pawn.isEnPassantCapture(startCol, startRow, endCol, endRow, enPassantTarget)) {
+                isEnPassantCapture = true;
+                // Remove the captured pawn
+                int[] capturedPawnPos = com.chess.pieces.Pawn.getEnPassantCapturedPawnPosition(enPassantTarget);
+                if (capturedPawnPos != null) {
+                    board.setPiece(capturedPawnPos[0], capturedPawnPos[1], new Piece(EMPTY, 0));
+                    System.out.println("En passant capture! Removed pawn at (" + capturedPawnPos[1] + "," + capturedPawnPos[0] + ")");
+                }
+            }
         }
         
+        // Check if capturing a regular piece
+        if (!isEnPassantCapture && endPiece != null && endPiece.getColor() != EMPTY && endPiece.getColor() != currentTurn) {
+            System.out.println("Capturing " + (endPiece.getColor() == WHITE ? "white" : "black") + " piece");
+        }
+        
+        // Execute the move
         board.movePiece(startRow, startCol, endRow, endCol);
+        
+        // Update en passant target for next turn
+        updateEnPassantTarget(startPiece, startCol, startRow, endCol, endRow);
         
         // Switch turns
         currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
         System.out.println("Turn switched to: " + (currentTurn == WHITE ? "White" : "Black"));
+        System.out.println("En passant target: " + enPassantTarget);
         
         // Trigger re-render
         if (renderCallback != null) {
@@ -112,6 +136,47 @@ public class gameHandler {
 
     public String getCurrentTurnString() {
         return currentTurn == WHITE ? "White" : "Black";
+    }
+
+    public String getEnPassantTarget() {
+        return enPassantTarget;
+    }
+
+    public void setEnPassantTarget(String enPassantTarget) {
+        this.enPassantTarget = enPassantTarget != null ? enPassantTarget : "-";
+        ruleHandler.setEnPassantTarget(this.enPassantTarget);
+    }
+
+    /**
+     * Updates the en passant target square after a move
+     */
+    private void updateEnPassantTarget(Piece movedPiece, int startCol, int startRow, int endCol, int endRow) {
+        // Reset en passant target by default
+        enPassantTarget = "-";
+
+        // Check if a pawn moved two squares
+        if (movedPiece instanceof com.chess.pieces.Pawn) {
+            int rowDiff = Math.abs(endRow - startRow);
+            if (rowDiff == 2) {
+                // Pawn moved two squares, set en passant target
+                char file = (char) ('a' + endCol);
+                int rank;
+                
+                if (movedPiece.getColor() == WHITE) {
+                    // White pawn moved from rank 7 to rank 5, target is rank 6
+                    rank = 8 - endRow - 1; // Convert board row to chess rank
+                } else {
+                    // Black pawn moved from rank 2 to rank 4, target is rank 3  
+                    rank = 8 - endRow + 1; // Convert board row to chess rank
+                }
+                
+                enPassantTarget = "" + file + rank;
+                System.out.println("Pawn moved two squares, en passant target set to: " + enPassantTarget);
+            }
+        }
+
+        // Update rule handler
+        ruleHandler.setEnPassantTarget(enPassantTarget);
     }
 
     // Drag methods
