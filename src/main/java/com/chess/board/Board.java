@@ -62,6 +62,6 @@ public class Board {
     }
 
     public void loadFenPosition(String fen) {
-        this.BOARD = TranslateFen.translateFen(fen).BOARD;
+        this.BOARD = TranslateFen.translateFen(fen, this).BOARD;
     }
 }
