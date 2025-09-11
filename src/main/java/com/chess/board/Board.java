@@ -43,8 +43,8 @@ public class Board {
             Piece movingPiece = BOARD[startX][startY];
             
             // If it's a pawn, mark it as no longer on first move
-            if (movingPiece instanceof Pawn) {
-                ((Pawn) movingPiece).setFirstMove(false);
+            if (movingPiece instanceof Pawn pawn) {
+                pawn.setFirstMove(false);
             }
             
             // Move piece (capturing if there's an enemy piece at destination)

@@ -21,6 +21,10 @@ public class gameHandler {
     // En passant state
     private String enPassantTarget = "-";
     
+    // Game state
+    private boolean gameOver = false;
+    private String gameResult = "";
+    
     // Constants for colors
     private static final int WHITE = 8;
     private static final int BLACK = 16;
@@ -31,7 +35,29 @@ public class gameHandler {
         this.ruleHandler = new RuleHandler();
     }
 
+    /**
+     * Initializes the game state after board setup
+     * Call this after setting up the initial board position
+     */
+    public void initializeGame() {
+        gameOver = false;
+        gameResult = "";
+        currentTurn = WHITE;
+        enPassantTarget = "-";
+        ruleHandler.setEnPassantTarget(enPassantTarget);
+        
+        // Check initial game state (shouldn't be checkmate/stalemate at start)
+        checkGameState();
+        System.out.println("Game initialized! White to move.");
+    }
+
     public void makeMove(int startCol, int startRow, int endCol, int endRow) {
+        // Check if game is already over
+        if (gameOver) {
+            System.out.println("Game is over! " + gameResult);
+            return;
+        }
+
         // Check bounds
         if (!isValidPosition(startCol, startRow) || !isValidPosition(endCol, endRow)) {
             System.out.println("Invalid position: out of bounds");
@@ -52,7 +78,7 @@ public class gameHandler {
             return;
         }
 
-        // Check if the move is valid (including en passant)
+        // Check if the move is valid (including en passant and check validation)
         if (!ruleHandler.isMoveValid(startPiece, startCol, startRow, endCol, endRow, board, enPassantTarget)) {
             System.out.println("Invalid move for piece type");
             return;
@@ -97,6 +123,9 @@ public class gameHandler {
         currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
         System.out.println("Turn switched to: " + (currentTurn == WHITE ? "White" : "Black"));
         System.out.println("En passant target: " + enPassantTarget);
+        
+        // Check game state after the move
+        checkGameState();
         
         // Trigger re-render
         if (renderCallback != null) {
@@ -243,5 +272,124 @@ public class gameHandler {
 
     public Piece getDraggedPiece() {
         return draggedPiece;
+    }
+
+    /**
+     * Checks if the current player is in check
+     */
+    public boolean isCurrentPlayerInCheck() {
+        return ruleHandler.isKingInCheck(board, currentTurn);
+    }
+
+    /**
+     * Checks if a specific color's king is in check
+     */
+    public boolean isKingInCheck(int color) {
+        return ruleHandler.isKingInCheck(board, color);
+    }
+
+    /**
+     * Gets the current board state for external access
+     */
+    public Board getBoard() {
+        return board;
+    }
+
+    /**
+     * Gets the rule handler for external access
+     */
+    public RuleHandler getRuleHandler() {
+        return ruleHandler;
+    }
+
+    /**
+     * Checks and updates the current game state
+     */
+    private void checkGameState() {
+        String gameState = ruleHandler.getGameState(board, currentTurn);
+        
+        switch (gameState) {
+            case "CHECKMATE":
+                gameOver = true;
+                String winner = (currentTurn == WHITE) ? "Black" : "White";
+                gameResult = "CHECKMATE! " + winner + " wins!";
+                System.out.println("=".repeat(50));
+                System.out.println(gameResult);
+                System.out.println("=".repeat(50));
+                break;
+                
+            case "STALEMATE":
+                gameOver = true;
+                gameResult = "STALEMATE! Game is a draw!";
+                System.out.println("=".repeat(50));
+                System.out.println(gameResult);
+                System.out.println("=".repeat(50));
+                break;
+                
+            case "CHECK":
+                System.out.println("CHECK! " + (currentTurn == WHITE ? "White" : "Black") + " king is in check!");
+                break;
+                
+            case "NORMAL":
+                // Game continues normally
+                break;
+        }
+    }
+
+    /**
+     * Checks if the game is over
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    /**
+     * Gets the game result message
+     */
+    public String getGameResult() {
+        return gameResult;
+    }
+
+    /**
+     * Gets the current game state as a string
+     */
+    public String getCurrentGameState() {
+        return ruleHandler.getGameState(board, currentTurn);
+    }
+
+    /**
+     * Resets the game to initial state
+     */
+    public void resetGame() {
+        gameOver = false;
+        gameResult = "";
+        currentTurn = WHITE;
+        enPassantTarget = "-";
+        ruleHandler.setEnPassantTarget(enPassantTarget);
+        
+        // Reset board (caller should reinitialize pieces)
+        System.out.println("Game reset! White to move.");
+    }
+
+    /**
+     * Checks if the current player has any legal moves
+     */
+    public boolean currentPlayerHasLegalMoves() {
+        return ruleHandler.hasAnyLegalMoves(board, currentTurn);
+    }
+
+    /**
+     * Gets detailed game information
+     */
+    public String getGameInfo() {
+        StringBuilder info = new StringBuilder();
+        info.append("Current Turn: ").append(currentTurn == WHITE ? "White" : "Black").append("\n");
+        info.append("Game State: ").append(getCurrentGameState()).append("\n");
+        info.append("En Passant: ").append(enPassantTarget).append("\n");
+        info.append("Game Over: ").append(gameOver).append("\n");
+        if (gameOver) {
+            info.append("Result: ").append(gameResult).append("\n");
+        }
+        return info.toString();
     }
 }

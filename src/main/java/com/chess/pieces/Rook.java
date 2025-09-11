@@ -1,16 +1,10 @@
 package com.chess.pieces;
 
-import com.chess.board.Board;
-
 public class Rook extends Piece {
-    private final int WHITE = 8;
-    private final int BLACK = 16;
-    private final Board board;
     private boolean hasMovedBefore = false;
 
     public Rook(int color) {
         super(color, 2);
-        this.board = new Board();
     }
 
     @Override
@@ -19,26 +13,28 @@ public class Rook extends Piece {
     }
 
     @Override
-    public boolean isLegalMove(int startX, int startY, int endX, int endY) {
-        // Rook can only move horizontally or vertically
-        if (startX == endX) {
-            return true;
+    public boolean isLegalMove(int startCol, int startRow, int endCol, int endRow) {
+        // Rook moves horizontally or vertically only
+        int colDiff = Math.abs(endCol - startCol);
+        int rowDiff = Math.abs(endRow - startRow);
+        
+        // Must move in straight line (either same row or same column)
+        if (colDiff == 0 && rowDiff > 0) {
+            return true; // Vertical movement
         }
         
-        if (startY == endY) {
-            return true;
-        }
-
-        // Rook can only move to an empty square
-        if (board.getPiece(endX, endY) != null) {
-            return isLegalCapture(startX, startY, endX, endY);
+        if (rowDiff == 0 && colDiff > 0) {
+            return true; // Horizontal movement
         }
         
-
         return false;
     }
 
-    public boolean isLegalCapture(int startX, int startY, int endX, int endY) {
-        return false;
+    public boolean hasMoved() {
+        return hasMovedBefore;
+    }
+
+    public void setMoved(boolean moved) {
+        this.hasMovedBefore = moved;
     }
 }

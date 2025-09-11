@@ -36,6 +36,9 @@ public class App {
 
         // Initialize the board
         board.initializeBoard();
+        
+        // Initialize the game state
+        gameHandler.initializeGame();
 
         // Connect render and gameHandler
         render.setGameHandler(gameHandler);

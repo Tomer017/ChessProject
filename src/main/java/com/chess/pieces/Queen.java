@@ -11,7 +11,26 @@ public class Queen extends Piece {
     }
 
     @Override
-    public boolean isLegalMove(int startX, int startY, int endX, int endY) {
+    public boolean isLegalMove(int startCol, int startRow, int endCol, int endRow) {
+        // Queen combines rook and bishop movement (horizontal, vertical, or diagonal)
+        int colDiff = Math.abs(endCol - startCol);
+        int rowDiff = Math.abs(endRow - startRow);
+        
+        // Horizontal movement (like rook)
+        if (rowDiff == 0 && colDiff > 0) {
+            return true;
+        }
+        
+        // Vertical movement (like rook)
+        if (colDiff == 0 && rowDiff > 0) {
+            return true;
+        }
+        
+        // Diagonal movement (like bishop)
+        if (colDiff > 0 && rowDiff > 0 && colDiff == rowDiff) {
+            return true;
+        }
+        
         return false;
     }
 }
