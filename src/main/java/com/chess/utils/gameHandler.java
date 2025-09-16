@@ -1,6 +1,7 @@
 package com.chess.utils;
 
 import com.chess.board.Board;
+import com.chess.board.TranslateFen;
 import com.chess.pieces.Piece;
 
 public class gameHandler {
@@ -68,13 +69,11 @@ public class gameHandler {
         
         // Check if there's a piece at start position
         if (startPiece == null || startPiece.getColor() == EMPTY) {
-            System.out.println("No piece at start position");
             return;
         }
 
         // Check if it's the correct player's turn
         if (startPiece.getColor() != currentTurn) {
-            System.out.println("Not your turn! Current turn: " + (currentTurn == WHITE ? "White" : "Black"));
             return;
         }
 
@@ -91,8 +90,7 @@ public class gameHandler {
         }
 
         // Make the move
-        System.out.println("Moving piece from (" + startCol + "," + startRow + ") to (" + endCol + "," + endRow + ")");
-        
+
         // Check for en passant capture before moving
         boolean isEnPassantCapture = false;
         if (startPiece instanceof com.chess.pieces.Pawn) {
@@ -110,7 +108,6 @@ public class gameHandler {
         
         // Check if capturing a regular piece
         if (!isEnPassantCapture && endPiece != null && endPiece.getColor() != EMPTY && endPiece.getColor() != currentTurn) {
-            System.out.println("Capturing " + (endPiece.getColor() == WHITE ? "white" : "black") + " piece");
         }
         
         // Execute the move
@@ -144,6 +141,7 @@ public class gameHandler {
 
         // Convert mouse coordinates to board coordinates
         // MouseHandler returns [x, y] where x=column, y=row
+        System.out.println(TranslateFen.boardToFENString(board));
         makeMove(pressedPos[0], pressedPos[1], releasedPos[0], releasedPos[1]);
     }
 
@@ -216,7 +214,6 @@ public class gameHandler {
             dragStartRow = row;
             dragStartCol = col;
             draggedPiece = piece;
-            System.out.println("Started dragging piece at (" + col + "," + row + ")");
             
             // Trigger re-render to show drag state
             if (renderCallback != null) {

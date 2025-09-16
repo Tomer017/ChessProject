@@ -149,6 +149,10 @@ public class TranslateFen {
         return fenData;
     }
 
+    public static String boardToFENString(Board board) {
+        return boardToPiecePlacement(board);
+    }
+
     /**
      * Parses the piece placement part of FEN string
      */

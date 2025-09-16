@@ -38,7 +38,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         mousePressedPosition = translateMousePosition(e);
         currentMousePosition = new int[]{e.getX(), e.getY()}; // Store actual pixel coordinates
         isDragging = true;
-        System.out.println("Mouse pressed at: " + mousePressedPosition[0] + ", " + mousePressedPosition[1]);
         
         // Notify gameHandler that dragging started
         if (gameHandler != null) {
@@ -50,7 +49,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     public void mouseReleased(MouseEvent e) {
         mouseReleasedPosition = translateMousePosition(e);
         isDragging = false;
-        System.out.println("Mouse released at: " + mouseReleasedPosition[0] + ", " + mouseReleasedPosition[1]);
         
         // Notify gameHandler that dragging stopped
         if (gameHandler != null) {

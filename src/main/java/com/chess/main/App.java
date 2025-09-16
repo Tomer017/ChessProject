@@ -35,8 +35,7 @@ public class App {
         frame.setVisible(true);
 
         // Initialize the board
-        board.initializeBoard();
-        
+        board.initializeBoard();        
         // Initialize the game state
         gameHandler.initializeGame();
 
